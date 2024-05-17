@@ -1,7 +1,8 @@
 <p align="center"><img src="https://raw.githubusercontent.com/anatosun/plexamp-docker/main/assets/icon.svg"/></p>
 
 This repository provides a Dockerfile and pre-built images of [Plexamp headless](https://plexamp.com/).
-It uses a FIFO pipe sink, idea for snapcast.
+
+It uses a FIFO pipe sink, ideal for snapcast or similar software.
 
 The architectures supported by this image are the following.
 
@@ -22,11 +23,10 @@ services:
   plexamp:
     container_name: plexamp
     privileged: true
-    image: ghcr.io/anatosun/plexamp:arm64v8
-    devices:
-      - "/dev/snd:/dev/snd"
+    image: ghcr.io/neilseligmann/plexamp:amd64
     volumes:
       - ./config:/root/.local/share/Plexamp/Settings # replace that with the appropriate host binding
+	  - HOST_FIFO_LOCATION:/fifo/snapfifo
     environment:
       - PLEXAMP_CLAIM_TOKEN=claim-XXXXXXXXXX # get your claim at https://www.plex.tv/claim/
       - PLEXAMP_PLAYER_NAME=docker # replace this with your player name
