@@ -25,6 +25,8 @@ RUN apt update -y && apt install -y -q \
 
 ENV WORKDIR /plexamp
 
+RUN adduser root pulse-access
+
 RUN mkdir -p $WORKDIR
 RUN chown -R $UNAME:$UNAME $WORKDIR
 USER $UNAME
@@ -40,6 +42,6 @@ WORKDIR $WORKDIR
 COPY ./run.sh $WORKDIR/run.sh
 RUN chmod +x $WORKDIR/run.sh
 
-USER node
+# USER node
 
 ENTRYPOINT sh -c $WORKDIR/run.sh

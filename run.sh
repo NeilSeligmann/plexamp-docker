@@ -1,5 +1,8 @@
+echo "Running as user: $(whoami)"
+
 echo "Starting Pulseaudio"
-pulseaudio -D --verbose --exit-idle-time=-1
+# pulseaudio -D --verbose --exit-idle-time=-1
+pulseaudio -D --verbose --exit-idle-time=-1 --system --disallow-exit
 # systemctl status --user pipewire-pulse.service
 
 # pacmd load-module module-virtual-sink sink_name=v1
