@@ -10,10 +10,9 @@ pulseaudio -D --verbose --exit-idle-time=-1 --system --disallow-exit
 # pactl -help
 # pactl list short sinks
 
-# ls -la /tmp/snapfifo
 echo "Creating fifo"
-pactl load-module module-pipe-sink file=/tmp/snapfifo sink_name=Snapcast format=s16le rate=48000
-chmod 777 /tmp/snapfifo
+pactl load-module module-pipe-sink file=/tmp/audio/plexamp_fifo sink_name=Snapcast format=s16le rate=48000
+chmod 777 /tmp/audio/plexamp_fifo
 
 echo "Starting Plexamp"
 node ./js/index.js
