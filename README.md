@@ -1,6 +1,7 @@
 <p align="center"><img src="https://raw.githubusercontent.com/anatosun/plexamp-docker/main/assets/icon.svg"/></p>
 
 This repository provides a Dockerfile and pre-built images of [Plexamp headless](https://plexamp.com/).
+It uses a FIFO pipe sink, idea for snapcast.
 
 The architectures supported by this image are the following.
 
