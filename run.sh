@@ -15,7 +15,7 @@ echo 0 > /proc/sys/fs/protected_fifos
 sysctl fs.protected_fifos=0
 
 echo "Creating fifo"
-pactl load-module module-pipe-sink file=/tmp/audio/plexamp_fifo sink_name=Plexamp format=s16le rate=48000
+pactl load-module module-pipe-sink file=/tmp/audio/plexamp_fifo sink_name=Plexamp format=s16le rate=44100
 chmod 777 /tmp/audio/plexamp_fifo
 
 echo "List sinks"
