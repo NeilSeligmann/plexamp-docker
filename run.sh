@@ -4,9 +4,15 @@ set -e
 
 echo "Running as user: $(whoami)"
 
+echo "--------------------------------"
+echo "Pulseaudio version: $(pulseaudio --version)"
+echo "Pulseaudio help:"
+pulseaudio --help
+echo "--------------------------------"
+
 echo "Starting Pulseaudio"
 # pulseaudio -D --verbose --exit-idle-time=-1
-pulseaudio -D -vvvv --exit-idle-time=-1 --system --disallow-exit
+pulseaudio -D --verbose -vvvv --exit-idle-time=-1 --system --disallow-exit --log-level=debug --log-target=stderr --disable-shm
 # systemctl status --user pipewire-pulse.service
 
 # pacmd load-module module-virtual-sink sink_name=v1
@@ -17,7 +23,7 @@ pulseaudio -D -vvvv --exit-idle-time=-1 --system --disallow-exit
 echo "Protected fifos status: $(cat /proc/sys/fs/protected_fifos)"
 
 # Use environment variables with defaults
-PIPE_FILE=${PIPE_FILE:-./tmp/audio/plexamp.out}
+PIPE_FILE=${PIPE_FILE:-/tmp/audio/plexamp.out}
 SINK_NAME=${SINK_NAME:-Plexamp}
 FORMAT=${FORMAT:-s16le}
 RATE=${RATE:-48000}
@@ -29,12 +35,13 @@ mkdir -p $(dirname ${PIPE_FILE})
 # Create the FIFO
 mkfifo ${PIPE_FILE}
 
-# Load the module
-echo "Loading Pulseaudio module-pip-sink module"
-pactl load-module module-pipe-sink file=${PIPE_FILE} sink_name=${SINK_NAME} format=${FORMAT} rate=${RATE}
-
+# Set permissions for the FIFO
 echo "Setting permissions for ${PIPE_FILE}"
 chmod 777 ${PIPE_FILE}
+
+# Load the module
+echo "Loading Pulseaudio module-pipe-sink module"
+pactl load-module module-pipe-sink file=${PIPE_FILE} sink_name=${SINK_NAME} format=${FORMAT} rate=${RATE}
 
 echo "Setting default sink to ${SINK_NAME}"
 pactl set-default-sink ${SINK_NAME}
