@@ -38,12 +38,17 @@ echo "Creating Pulseaudio FIFO at ${PIPE_FILE}"
 # Create the directory if it doesn't exist
 mkdir -p $(dirname ${PIPE_FILE})
 
-# Create the FIFO
-mkfifo ${PIPE_FILE}
-
-# Set permissions for the FIFO
-echo "Setting permissions for ${PIPE_FILE}"
-chmod 777 ${PIPE_FILE}
+# Create the FIFO only if it doesn't exist
+if [ ! -p "${PIPE_FILE}" ]; then
+    echo "Creating FIFO pipe ${PIPE_FILE}"
+    mkfifo ${PIPE_FILE}
+    
+    # Set permissions for the FIFO
+    echo "Setting permissions for ${PIPE_FILE}"
+    chmod 777 ${PIPE_FILE}
+else
+    echo "FIFO pipe ${PIPE_FILE} already exists"
+fi
 
 # Load the module
 echo "Loading Pulseaudio module-pipe-sink module"
