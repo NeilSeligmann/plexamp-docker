@@ -15,8 +15,19 @@ if pulseaudio --check; then
     echo "Pulseaudio is already running!"
 else
     echo "Starting Pulseaudio..."
-    # pulseaudio -D --verbose --exit-idle-time=-1
-    pulseaudio -D --verbose -vvvv --exit-idle-time=-1 --system --disallow-exit --log-level=debug --log-target=stderr --disable-shm
+    # Start pulseaudio and capture the output
+    if ! pulseaudio -D --verbose -v --exit-idle-time=-1 --system --disallow-exit --log-level=4 --log-target=/var/log/pulse/log --disable-shm; then
+        echo "Failed to start Pulseaudio. Logs:"
+        # Print the logs if available
+        if [ -f ~/.config/pulse/log ]; then
+            cat ~/.config/pulse/log
+        elif [ -f /var/log/pulse/log ]; then
+            cat /var/log/pulse/log
+        else
+            echo "No pulseaudio logs found."
+        fi
+        exit 1
+    fi
     echo "Pulseaudio started!"
 fi
 # systemctl status --user pipewire-pulse.service
