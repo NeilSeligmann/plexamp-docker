@@ -6,13 +6,19 @@ echo "Running as user: $(whoami)"
 
 echo "--------------------------------"
 echo "Pulseaudio version: $(pulseaudio --version)"
-echo "Pulseaudio help:"
-pulseaudio --help
+# echo "Pulseaudio help:"
+# pulseaudio --help
 echo "--------------------------------"
 
-echo "Starting Pulseaudio"
-# pulseaudio -D --verbose --exit-idle-time=-1
-pulseaudio -D --verbose -vvvv --exit-idle-time=-1 --system --disallow-exit --log-level=debug --log-target=stderr --disable-shm
+# Check if pulseaudio is already running
+if pulseaudio --check; then
+    echo "Pulseaudio is already running!"
+else
+    echo "Starting Pulseaudio..."
+    # pulseaudio -D --verbose --exit-idle-time=-1
+    pulseaudio -D --verbose -vvvv --exit-idle-time=-1 --system --disallow-exit --log-level=debug --log-target=stderr --disable-shm
+    echo "Pulseaudio started!"
+fi
 # systemctl status --user pipewire-pulse.service
 
 # pacmd load-module module-virtual-sink sink_name=v1
