@@ -10,26 +10,39 @@ echo "Pulseaudio version: $(pulseaudio --version)"
 # pulseaudio --help
 echo "--------------------------------"
 
+# Kill any existing pulseaudio processes
+echo "Stopping any existing Pulseaudio processes..."
+pulseaudio --kill 2>/dev/null || true
+
+# Clean up existing pulseaudio config files
+echo "Cleaning up Pulseaudio configuration..."
+rm -rf ~/.config/pulse/* /var/run/pulse/* 2>/dev/null || true
+
 # Check if pulseaudio is already running
 if pulseaudio --check; then
-    echo "Pulseaudio is already running!"
+    echo "Pulseaudio is still running after cleanup attempt!"
+    echo "Trying to force kill..."
+    pkill -9 pulseaudio || true
 else
-    echo "Starting Pulseaudio..."
-    # Start pulseaudio and capture the output
-    if ! pulseaudio -D --verbose -v --exit-idle-time=-1 --system --disallow-exit --log-level=4 --log-target=/var/log/pulse/log --disable-shm; then
-        echo "Failed to start Pulseaudio. Logs:"
-        # Print the logs if available
-        if [ -f ~/.config/pulse/log ]; then
-            cat ~/.config/pulse/log
-        elif [ -f /var/log/pulse/log ]; then
-            cat /var/log/pulse/log
-        else
-            echo "No pulseaudio logs found."
-        fi
-        exit 1
-    fi
-    echo "Pulseaudio started!"
+    echo "No Pulseaudio running, starting fresh..."
 fi
+
+echo "Starting Pulseaudio..."
+# Start pulseaudio and capture the output
+if ! pulseaudio -D --verbose -v --exit-idle-time=-1 --system --disallow-exit --log-level=4 --log-target=stderr --disable-shm; then
+    echo "Failed to start Pulseaudio. Logs:"
+    # Print the logs if available
+    if [ -f ~/.config/pulse/log ]; then
+        cat ~/.config/pulse/log
+    elif [ -f /var/log/pulse/log ]; then
+        cat /var/log/pulse/log
+    else
+        echo "No pulseaudio logs found."
+    fi
+    exit 1
+fi
+echo "Pulseaudio started!"
+
 # systemctl status --user pipewire-pulse.service
 
 # pacmd load-module module-virtual-sink sink_name=v1
